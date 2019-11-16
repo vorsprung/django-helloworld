@@ -12,7 +12,7 @@ pipeline {
     }
 
     stage('TF Plan') {
-      dir('terraforming') {
+      dir('terraformation') {
       steps {    
           sh 'terraform init'
           sh 'terraform plan -out myplan'
@@ -29,7 +29,7 @@ pipeline {
     }
 
     stage('TF Apply') {
-      dir('terraforming') {
+      dir('terraformation') {
       steps {
         
           sh 'terraform apply -input=false myplan'        }
