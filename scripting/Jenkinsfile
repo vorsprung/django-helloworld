@@ -1,0 +1,42 @@
+pipeline {
+
+  agent any
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+        sh 'makeself --target /opt/django django-helloworld out.sh "django" scripting/l.sh'
+      }
+    }
+
+    stage('TF Plan') {
+      dir('terraforming') {
+      steps {    
+          sh 'terraform init'
+          sh 'terraform plan -out myplan'
+          }
+      }      
+    }
+
+    stage('Approval') {
+      steps {
+        script {
+          def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+        }
+      }
+    }
+
+    stage('TF Apply') {
+      dir('terraforming') {
+      steps {
+        
+          sh 'terraform apply -input=false myplan'        }
+      }
+    }
+    }
+
+  } 
+
+}
