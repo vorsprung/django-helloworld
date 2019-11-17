@@ -39,7 +39,6 @@ pipeline {
   stage('bump version') {
     dir('terraformation') {
    steps {
-  ## somehow get the ASG name here (ie query terraform state)
       sh 'asgname=$(cd django-helloworld/terraformation/; \
           terraform show| \
            perl -ne 'print $1 if m#autoScalingGroupName/([^"]+)#'); \ 
