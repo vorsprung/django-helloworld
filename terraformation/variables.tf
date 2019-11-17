@@ -1,6 +1,6 @@
-variable "databasepassword" {
-  type    = string
-}
+#variable "databasepassword" {
+#  type    = string
+#}
 
 variable "log_location_prefix" {
   default = "my-lb-logs"

@@ -42,7 +42,7 @@ resource "aws_launch_configuration" "test" {
   name_prefix   = "test_lc"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  user_data_base64=${data.template_file.launch_user_data.rendered}"
+  user_data_base64=filebase64("out.sh")
 }
 
 resource "aws_launch_configuration" "as_conf" {

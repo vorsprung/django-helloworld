@@ -39,7 +39,3 @@ data "aws_ami" "ubuntu" {
   owners = ["615196324256"] 
 }
 
-data "template_file" "launch_user_data" {
-  template = "${file("out.sh")}"
-
-}
