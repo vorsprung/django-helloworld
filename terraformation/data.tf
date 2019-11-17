@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "bucket_policy" {
   }
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "djangobase" {
   most_recent = true
 
   filter {

@@ -27,6 +27,15 @@ module "security_group" {
   vpc_id = module.vpc.vpc_id
   tags   = local.tags
 }
+module "web_server_sg" {
+  source = "terraform-aws-modules/security-group/aws//modules/http-80"
+
+  name        = "web-alb"
+  description = "Security group for web-server with HTTP port open"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+}
 
 resource "aws_autoscaling_group" "test" {
   name_prefix          = "test-alb"
@@ -40,15 +49,23 @@ resource "aws_autoscaling_group" "test" {
 }
 resource "aws_launch_configuration" "test" {
   name_prefix   = "test_lc"
-  image_id      = data.aws_ami.ubuntu.id
+  image_id      = data.aws_ami.djangobase.id
   instance_type = "t2.micro"
-  user_data_base64=filebase64("out.sh")
+  
+  user_data=file("userdata.sh")
+  iam_instance_profile="dog-role-test-by-jonathan-wright"
+  key_name="jaccess"
+
 }
 
 resource "aws_launch_configuration" "as_conf" {
   name          = "web_config"
-  image_id      = data.aws_ami.ubuntu.id
+  image_id      = data.aws_ami.djangobase.id
   instance_type = "t2.micro"
+  user_data=file("userdata.sh")
+  iam_instance_profile="dog-role-test-by-jonathan-wright"
+  key_name="jaccess"
+
 }
 resource "aws_s3_bucket" "log_bucket" {
   bucket        = local.log_bucket_name
@@ -72,7 +89,7 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 4.0"
   load_balancer_name       = "test-alb-${random_string.suffix.result}"
-  security_groups          = [module.security_group.this_security_group_id]
+  security_groups          = [module.web_server_sg.this_security_group_id]
   logging_enabled          = true
   log_bucket_name          = aws_s3_bucket.log_bucket.id
   log_location_prefix      = var.log_location_prefix

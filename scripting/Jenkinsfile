@@ -8,7 +8,8 @@ pipeline {
       steps {
         checkout scm
         dir('..') {
-        sh 'makeself --target /opt/django django-helloworld django-helloworld/terraformation/out.sh django-helloworld/scripting/launchersetup.sh'
+        sh 'django-helloworld/scripting/stripper.sh'
+        sh 'makeself --target /opt/django minimal django-helloworld/terraformation/out.sh bash ./launchersetup.sh'
         }
       }
 
@@ -22,24 +23,26 @@ pipeline {
           }
       }      
     }
-
-    stage('Approval') {
+    stage('Publish') {
       steps {
-        script {
-          def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
-        }
+        sh 'aws s3 cp terraformation/out.sh s3://djangoupdater/latest'
       }
     }
-
     stage('TF Apply') {
       dir('terraformation') {
       steps {
         
           sh 'terraform apply -input=false myplan'        }
       }
-    }
+    
+  }
+  #stage('bump version') {
+  # steps {
+  ## somehow get the ASG name here (ie query terraform state)
+  #    sh 'aws autoscaling update-auto-scaling-group --auto-scaling-group-name alb --health-check-type ALB --health-check-grace-period 60'
+  # }
+  #}
     }
 
   } 
 
-}
