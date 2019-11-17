@@ -16,8 +16,9 @@ pipeline {
     }
 
     stage('TF Plan') {
-      dir('terraformation') {
+      
       steps {    
+      dir('terraformation') {
           sh 'terraform init'
           sh 'terraform plan -out myplan'
           }
@@ -29,20 +30,20 @@ pipeline {
       }
     }
     stage('TF Apply') {
-      dir('terraformation') {
+      
       steps {
-        
+      dir('terraformation') {  
           sh 'terraform apply -input=false myplan'        }
       }
     
   }
   stage('bump version') {
-    dir('terraformation') {
+    
    steps {
-      sh 'asgname=$(cd django-helloworld/terraformation/; terraform show| perl -ne "print \$1 if m#autoScalingGroupName/([^"]+)#"); aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=6 --min-size=6'
+    dir('terraformation') {
+      sh 'asgname=$(terraform show| perl -ne "print \$1 if m#autoScalingGroupName/([^"]+)#"); aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=6 --min-size=6'
       sleep(time:20,unit:"SECONDS")
-       sh 'asgname=$(cd django-helloworld/terraformation/; \
-          terraform show| perl -ne "print \$1 if m#autoScalingGroupName/([^"]+)#") ; aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=3 --min-size=3'
+      sh 'asgname=$(terraform show| perl -ne "print \$1 if m#autoScalingGroupName/([^"]+)#") ; aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=3 --min-size=3'
    }
   }
     }
