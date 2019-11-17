@@ -7,10 +7,10 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout scm
-        dir('..') {
-        sh 'django-helloworld/scripting/stripper.sh'
-        sh 'makeself --target /opt/django minimal django-helloworld/terraformation/out.sh bash ./launchersetup.sh'
-        }
+       
+        sh 'scripting/stripper.sh'
+        sh 'makeself --target /opt/django minimal terraformation/out.sh bash ./launchersetup.sh'
+        
       }
 
     }
