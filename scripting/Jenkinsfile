@@ -7,8 +7,11 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout scm
-        sh 'makeself --target /opt/django django-helloworld out.sh "django" scripting/l.sh'
+        dir('..') {
+        sh 'makeself --target /opt/django django-helloworld django-helloworld/terraformation/out.sh django-helloworld/scripting/launchersetup.sh'
+        }
       }
+
     }
 
     stage('TF Plan') {
