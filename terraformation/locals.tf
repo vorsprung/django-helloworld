@@ -30,7 +30,7 @@ log_bucket_name = "jamie-alb-${var.region}"
     {
       "name"             = "foo"
       "backend_protocol" = "HTTP"
-      "backend_port"     = 80
+      "backend_port"     = 8080
       "slow_start"       = 0
     },
     {
