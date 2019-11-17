@@ -36,13 +36,20 @@ module "web_server_sg" {
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
 }
+module "ssh_debug_sg" {
+  source = "terraform-aws-modules/security-group/aws//modules/ssh"
+  name = "ssh"
+  vpc_id = module.vpc.vpc_id
+  ingress_cidr_blocks = ["109.180.133.201/32"]
+}
 
 resource "aws_autoscaling_group" "test" {
   name_prefix          = "test-alb"
-  max_size             = 1
-  min_size             = 1
+  max_size             = 3
+  min_size             = 3
   launch_configuration = aws_launch_configuration.as_conf.name
   health_check_type    = "EC2"
+  health_check_grace_period = 300
   target_group_arns    = module.alb.target_group_arns
   force_delete         = true
   vpc_zone_identifier  = module.vpc.public_subnets
@@ -55,6 +62,7 @@ resource "aws_launch_configuration" "test" {
   user_data=file("userdata.sh")
   iam_instance_profile="dog-role-test-by-jonathan-wright"
   key_name="jaccess"
+  security_groups = [module.ssh_debug_sg.this_security_group_id]
 
 }
 
@@ -65,6 +73,7 @@ resource "aws_launch_configuration" "as_conf" {
   user_data=file("userdata.sh")
   iam_instance_profile="dog-role-test-by-jonathan-wright"
   key_name="jaccess"
+  security_groups = [module.ssh_debug_sg.this_security_group_id]
 
 }
 resource "aws_s3_bucket" "log_bucket" {
@@ -89,7 +98,7 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 4.0"
   load_balancer_name       = "test-alb-${random_string.suffix.result}"
-  security_groups          = [module.web_server_sg.this_security_group_id]
+  security_groups          = [module.web_server_sg.this_security_group_id, module.vpc.default_security_group_id]
   logging_enabled          = true
   log_bucket_name          = aws_s3_bucket.log_bucket.id
   log_location_prefix      = var.log_location_prefix

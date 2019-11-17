@@ -36,13 +36,24 @@ pipeline {
       }
     
   }
-  #stage('bump version') {
-  # steps {
+  stage('bump version') {
+    dir('terraformation') {
+   steps {
   ## somehow get the ASG name here (ie query terraform state)
-  #    sh 'aws autoscaling update-auto-scaling-group --auto-scaling-group-name alb --health-check-type ALB --health-check-grace-period 60'
-  # }
-  #}
+      sh 'asgname=$(cd django-helloworld/terraformation/; \
+          terraform show| \
+           perl -ne 'print $1 if m#autoScalingGroupName/([^"]+)#'); \ 
+           aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=6 --min-size=6'
+      sleep(time:20,unit:"SECONDS")
+       sh 'asgname=$(cd django-helloworld/terraformation/; \
+          terraform show| \
+           perl -ne 'print $1 if m#autoScalingGroupName/([^"]+)#'); \ 
+           aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=3 --min-size=3'
+      
+   }
+  }
     }
 
+  }
   } 
 
