@@ -39,15 +39,10 @@ pipeline {
   stage('bump version') {
     dir('terraformation') {
    steps {
-      sh 'asgname=$(cd django-helloworld/terraformation/; terraform show| 
-           perl -ne \'print $1 if m#autoScalingGroupName/([^"]+)#');\' \ 
-           aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=6 --min-size=6'
+      sh 'asgname=$(cd django-helloworld/terraformation/; terraform show| perl -ne \'print $1 if m#autoScalingGroupName/([^"]+)#');\' aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=6 --min-size=6'
       sleep(time:20,unit:"SECONDS")
        sh 'asgname=$(cd django-helloworld/terraformation/; \
-          terraform show| \
-           perl -ne \'print $1 if m#autoScalingGroupName/([^"]+)#');\' \ 
-           aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=3 --min-size=3'
-      
+          terraform show| perl -ne \'print $1 if m#autoScalingGroupName/([^"]+)#');\' ; aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$asgname" --max-size=3 --min-size=3'
    }
   }
     }
