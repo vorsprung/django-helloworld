@@ -28,7 +28,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["djangobase_*"]
   }
 
   filter {
@@ -36,6 +36,10 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["615196324256"] 
 }
 
+data "template_file" "launch_user_data" {
+  template = "${file("out.sh")}"
+
+}
