@@ -3,6 +3,8 @@ django-helloworld
 =================
 
 A Django '`Hello World <https://en.wikipedia.org/wiki/%22Hello,_World!%22_program>`_' program example.
+With the necessary support files to automatically setup infrastructure on AWS and deploy with Jenkins
+
 
 Installation
 ============
