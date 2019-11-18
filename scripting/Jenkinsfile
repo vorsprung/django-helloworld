@@ -16,7 +16,9 @@ pipeline {
     }
     
     stage('unit test') {
+      steps {
       sh 'python3 manage.py test'
+    }
     }
 
     stage('TF Plan') {
