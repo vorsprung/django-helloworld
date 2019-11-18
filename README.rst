@@ -6,6 +6,8 @@ A Django '`Hello World <https://en.wikipedia.org/wiki/%22Hello,_World!%22_progra
 
 Installation
 ============
+This automated by the scripting / terraformation folders
+
 
 You need install the pre-requirements for run this Hello World example.
 
@@ -80,6 +82,7 @@ At which point you should see:
 
 Run application
 ===============
+This is automated as a deploy to a AWS autoscaling group via the scripting / terraformation
 
 After which you can run::
 
