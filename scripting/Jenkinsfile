@@ -17,7 +17,7 @@ pipeline {
     
     stage('unit test') {
       steps {
-      sh 'pip3 install --user requirements.txt'
+      sh 'pip3 install --user -r requirements.txt'
       sh 'python3 manage.py test'
     }
     }
