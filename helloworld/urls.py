@@ -22,4 +22,6 @@ urlpatterns = [
 
     # Hello, world!
     path('', views.index, name='index')
+    path('dog/', views.dog, name='dog')
+
 ]
